@@ -76,13 +76,14 @@ public class TransferActionHandler extends BaseActionHandler {
                      String comentario = jsonData.getString("comentario");
                      String origenId = jsonData.getString("origen");
                      String destinoId = jsonData.getString("destino");
+                     String strGLItemId = jsonData.getString("glItem");
+                     
                      FIN_FinancialAccount origen = OBDal.getInstance().get(FIN_FinancialAccount.class, origenId);
                      FIN_FinancialAccount destino = OBDal.getInstance().get(FIN_FinancialAccount.class, destinoId);
 
                      HttpServletRequest request = (HttpServletRequest) parameters.get(KernelConstants.HTTP_REQUEST);
                      VariablesSecureApp vars = new VariablesSecureApp(request);
 
-                     String strGLItemId = "D5FA81CB2EBB4D1E9A053881AE579FB3";
                      dao = new AdvPaymentMngtDao();
                      String strMessage = "";
                      OBError msg = new OBError();

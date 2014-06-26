@@ -51,20 +51,45 @@ isc.Lucasian_ParameterPopup.addProperties({
               valores[origen[OB.Constants.ID]] = origen["name"],
               valores[destino[OB.Constants.ID]]= destino["name"];
               
+              glitemDS = OB.Datasource.create({ 
+                     destroy: function () { 
+                            this.Super('destroy', arguments); 
+                     }, 
+                     dataURL: OB.Application.contextUrl + 'org.openbravo.service.datasource/FinancialMgmtGLItem' 
+              }); 
+             
+              
               console.log(valores);
               var datos = {
+                     showErrorIcons : true,
                      numCols: 1,
+                     errorOrientation : 'left',
                      fields: [
+                     { 
+                            title: OB.I18N.getLabel('LLM_glItemTitle'),
+                            name:"glItem", 
+                            type: 'select',// equal to select in smartclient type 
+                            optionDataSource: glitemDS, 
+                            displayField: 'name', 
+                            valueField: 'id', 
+                            required:true,	
+                            autoFetchData: true ,
+                            titleClassName: 'OBFormFieldLabel', 
+                            textBoxStyle: 'OBFormFieldSelectInput', 
+                            cellClassName: 'OBFormField'
+                     },
                      {
                             name: 'monto',
                             title: OB.I18N.getLabel('LLM_montoTitle'),
                             height: 20,
+                            required:true,	
                             width: 200,
                             type: 'text' //Date reference
                      },
                      {
                             name: 'comentario',
                             title: OB.I18N.getLabel('LLM_comentarioTitle'),
+                            required:true,	
                             height: 20,
                             width: 200,
                             type: 'text' //Date reference
@@ -72,22 +97,30 @@ isc.Lucasian_ParameterPopup.addProperties({
                      {
                             name: 'origen',
                             title: OB.I18N.getLabel('LLM_origenTitle'),
+                            required:true,	
                             height: 20,
                             width: 200,
                             type: 'select',
                             valueMap:valores,
-                            defaultValue: origen[OB.Constants.ID]
+                            defaultValue: origen[OB.Constants.ID],
+                            titleClassName: 'OBFormFieldLabel', 
+                            textBoxStyle: 'OBFormFieldSelectInput', 
+                            cellClassName: 'OBFormField'
                             
                      } 
                      ,
                      {
                             name: 'destino',
                             title: OB.I18N.getLabel('LLM_destinoTitle'),
+                            required:true,	
                             height: 20,
                             width: 200,
                             type: 'select',
                             valueMap: valores,
-                            defaultValue: destino[OB.Constants.ID]
+                            defaultValue: destino[OB.Constants.ID],
+                            titleClassName: 'OBFormFieldLabel', 
+                            textBoxStyle: 'OBFormFieldSelectInput', 
+                            cellClassName: 'OBFormField'
                      }  
                      ]
               };
@@ -99,26 +132,29 @@ isc.Lucasian_ParameterPopup.addProperties({
                      title: OB.I18N.getLabel('LLM_OK_BUTTON_TITLE'),
                      popup: this,
                      action: function () {
-                            var callback = function (rpcResponse, data, rpcRequest) {
-                                   // show result
-                                   console.log(data);
-                                   isc.say(OB.I18N.getLabel(data.label));
+                            if(this.popup.mainform.validate()){
+                                   var callback = function (rpcResponse, data, rpcRequest) {
+                                          // show result
+                                          console.log(data);
+                                          isc.say(OB.I18N.getLabel(data.label));
  
-                                   // close process to refresh current view
-                                   rpcRequest.clientContext.popup.closeClick();
-                                   view.viewGrid.refreshGrid();
-                            };
- 
-                            OB.RemoteCallManager.call(this.popup.actionHandler, {
-                                   origen:this.popup.mainform.getField("origen").getValue(),
-                                   destino: this.popup.mainform.getField("destino").getValue(),
-                                   monto: this.popup.mainform.getField("monto").getValue(),
-                                   comentario: this.popup.mainform.getField("comentario").getValue()
-                            //action: this.popup.params.action,
-                            //dateParam: this.popup.mainform.getField('Date').getValue(), //send the parameter to the server too
-                            }, {}, callback, {
-                                   popup: this.popup
-                            }); 
+                                          // close process to refresh current view
+                                          rpcRequest.clientContext.popup.closeClick();
+                                          view.viewGrid.refreshGrid();
+                                   };
+                            
+                                   OB.RemoteCallManager.call(this.popup.actionHandler, {
+                                          origen:this.popup.mainform.getField("origen").getValue(),
+                                          destino: this.popup.mainform.getField("destino").getValue(),
+                                          monto: this.popup.mainform.getField("monto").getValue(),
+                                          comentario: this.popup.mainform.getField("comentario").getValue(),
+                                          glItem: this.popup.mainform.getField("glItem").getValue()
+                                   //action: this.popup.params.action,
+                                   //dateParam: this.popup.mainform.getField('Date').getValue(), //send the parameter to the server too
+                                   }, {}, callback, {
+                                          popup: this.popup
+                                   }); 
+                            }
                      }
               });
    
@@ -186,7 +222,7 @@ isc.Lucasian_ParameterPopup.addProperties({
                      OB.RemoteCallManager.call('com.lucasian.openbravo.transfer.TransferActionHandler', {
                             cuentas: orders
                      }, {}, callback);
-                     */
+                      */
                     
                      isc.Lucasian_ParameterPopup.create({
                             origen: selectedRecords[0],
@@ -211,5 +247,5 @@ isc.Lucasian_ParameterPopup.addProperties({
   
        // register the button for the sales order tab
        // the first parameter is a unique identification so that one button can not be registered multiple times.
-       OB.ToolbarRegistry.registerButton(buttonProps.buttonType, isc.OBToolbarIconButton, buttonProps, 100, "2845D761A8394468BD3BA4710AA888D4");
+       OB.ToolbarRegistry.registerButton(buttonProps.buttonType, isc.OBToolbarIconButton, buttonProps, 100, null);
 }());
