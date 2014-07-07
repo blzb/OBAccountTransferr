@@ -92,7 +92,6 @@ public class TransferActionHandler extends BaseActionHandler {
                             // PURCHASE = PAYMENT                            
                             // Accounting Dimensions
                             final String strElement_OT = "";
-                            final Organization organization = OBDal.getInstance().get(Organization.class, strElement_OT);
                             final String strElement_PJ = "";
                             final Project project = OBDal.getInstance().get(Project.class, strElement_PJ);
                             final String strElement_AY = "";
@@ -106,7 +105,7 @@ public class TransferActionHandler extends BaseActionHandler {
 
                             // Currency, Organization, paymentDate,
                             FIN_FinaccTransaction transaccionRetiro = dao.getNewFinancialTransaction(
-                                    organization,
+                                    origen.getOrganization() ,
                                     origen,
                                     TransactionsDao.getTransactionMaxLineNo(origen) + 10,
                                     null,
@@ -125,7 +124,7 @@ public class TransferActionHandler extends BaseActionHandler {
                                     null,
                                     null);
                             FIN_FinaccTransaction transaccionDeposito = dao.getNewFinancialTransaction(
-                                    organization,
+                                    destino.getOrganization()),
                                     destino,
                                     TransactionsDao.getTransactionMaxLineNo(destino) + 10,
                                     null,
